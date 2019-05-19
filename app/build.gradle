@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+apply from: '../config/config-android.gradle'
+apply from: '../config/config-properties.gradle'
+
+android {
+    defaultConfig {
+        applicationId "guillaume.agis.babylonhealth"
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "guillaume.agis.babylonhealth.ui.di.EspressoTestRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_BASE_URL", "\"${config.variablesProperties.api_base_url_prod}\""
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "API_BASE_URL", "\"${config.variablesProperties.api_base_url_debug}\""
+        }
+    }
+}
+
+dependencies {
+    kotlin()
+    dagger()
+    networking()
+    rx()
+    architectureComponents()
+    view()
+    testing()
+
+    androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:1.1.2-3"
+    androidTestCompile 'org.mockito:mockito-core:2.27.0'
+    androidTestImplementation 'com.github.VictorAlbertos:DeviceAnimationTestRule:0.0.2'
+
+    androidTestCompile 'org.mockito:mockito-android:2.27.0'
+    androidTestImplementation 'com.github.Zhuinden:espresso-helper:0.1.3'
+}
