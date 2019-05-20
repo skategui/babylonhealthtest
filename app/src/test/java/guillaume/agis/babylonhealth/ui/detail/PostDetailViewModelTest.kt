@@ -5,7 +5,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
-import guillaume.agis.babylonhealth.manager.PostsManager
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.rule.BaseRule
 import guillaume.agis.babylonhealth.utils.DataBuilder
@@ -20,7 +20,7 @@ import java.net.UnknownHostException
 class PostDetailViewModelTest : BaseRule() {
 
     private lateinit var viewModel: PostDetailViewModel
-    private val postManager = mock<PostsManager>()
+    private val postManager = mock<PostsUseCase>()
     private val comments = listOf<Comment>(mock(), mock())
 
     private val post = DataBuilder.providePost()

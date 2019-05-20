@@ -1,4 +1,4 @@
-package guillaume.agis.babylonhealth.manager
+package guillaume.agis.babylonhealth.usecase
 
 import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.model.Post
@@ -12,14 +12,15 @@ import javax.inject.Inject
  * Post Manager is responsible to manage all the business logic related to the Post
  * such as associated a user to a loaded post (in this example)
  */
-class PostsManagerImpl
+class PostsUseCaseImpl
 @Inject constructor(
-    private val usersManager: UsersManager,
+    private val usersUseCase: UsersUseCase,
     private val postsRepository: PostsRepository
-) : PostsManager {
+) : PostsUseCase {
 
     /**
      * Get the posts list from the server
+     * Use ConcatMap in order to keep the order
      *  @return [Single] [List] [Post]  list of posts fetched from server
      */
     override fun getPosts(): Single<List<Post>> {
@@ -43,7 +44,7 @@ class PostsManagerImpl
      *  @return  [Post]  post object created
      */
     private fun createPostByByUserId(post: PostDao): Single<Post> {
-        return usersManager.getUserById(post.userId).map { user ->
+        return usersUseCase.getUserById(post.userId).map { user ->
             Post(
                 user = user,
                 id = post.id,

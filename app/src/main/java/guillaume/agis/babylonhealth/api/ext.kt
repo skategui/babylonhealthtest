@@ -29,6 +29,7 @@ fun <T> Observable<T>.io(): Observable<T> {
 
 /**
  *   REQUESTS : Convert ResponseBody to List of Object
+ *   source : https://proandroiddev.com/retrofitting-and-rxjaving-heavy-jsons-2c1fcfa6383c
  */
 
 

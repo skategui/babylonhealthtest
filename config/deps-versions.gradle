@@ -42,12 +42,13 @@ ext.versions = [
         // TESTING                                                                                //
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        'jUnit'       : '4.12',
-        'truth'       : '0.42',
-        'mockito'     : '2.10.0',
-        'runner'      : '1.2.0-beta01',
-        'androidxtest': '1.1.0',
-        'espresso'    : '3.2.0-beta01',
-        'coretesting' : '1.1.1',
-        'mockitokotlin' : '2.1.0'
+        'jUnit'          : '4.12',
+        'jUnitKotlin'    : '1.1.2-3',
+        'truth'          : '0.42',
+        'mockito'        : '2.27.0',
+        'runner'         : '1.2.0-beta01',
+        'androidxtest'   : '1.1.0',
+        'espresso'       : '3.2.0-beta01',
+        'coretesting'    : '1.1.1',
+        'mockitokotlin'  : '2.1.0'
 ]

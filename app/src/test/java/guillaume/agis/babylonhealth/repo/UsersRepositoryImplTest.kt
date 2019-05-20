@@ -1,7 +1,7 @@
 package guillaume.agis.babylonhealth.repo
 
 import com.nhaarman.mockitokotlin2.*
-import guillaume.agis.babylonhealth.api.ApiService
+import guillaume.agis.babylonhealth.api.UserResource
 import guillaume.agis.babylonhealth.model.User
 import guillaume.agis.babylonhealth.rule.BaseRule
 import guillaume.agis.babylonhealth.utils.DataBuilder
@@ -11,8 +11,7 @@ import org.junit.Test
 
 class UsersRepositoryImplTest : BaseRule() {
 
-
-    private val apiService = mock<ApiService>()
+    private val userResource = mock<UserResource>()
 
     private lateinit var repository: UsersRepositoryImpl
 
@@ -22,9 +21,9 @@ class UsersRepositoryImplTest : BaseRule() {
         val user = DataBuilder.buildUser(DataBuilder.userId)
         val user2 = DataBuilder.buildUser(DataBuilder.otherUserId)
 
-        repository = UsersRepositoryImpl(apiService)
-        whenever(apiService.getUserById(eq(DataBuilder.userId))).thenReturn(Single.just(user))
-        whenever(apiService.getUserById(eq(DataBuilder.otherUserId))).thenReturn(Single.just(user2))
+        repository = UsersRepositoryImpl(userResource)
+        whenever(userResource.getUserById(eq(DataBuilder.userId))).thenReturn(Single.just(user))
+        whenever(userResource.getUserById(eq(DataBuilder.otherUserId))).thenReturn(Single.just(user2))
 
     }
 
@@ -37,8 +36,8 @@ class UsersRepositoryImplTest : BaseRule() {
         assertGetUserById(user.id, user)
         assertGetUserById(user2.id, user2)
 
-        verify(apiService, times(1)).getUserById(eq(user.id))
-        verify(apiService, times(1)).getUserById(eq(user2.id))
+        verify(userResource, times(1)).getUserById(eq(user.id))
+        verify(userResource, times(1)).getUserById(eq(user2.id))
     }
 
 

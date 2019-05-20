@@ -1,10 +1,10 @@
-package guillaume.agis.babylonhealth.manager
+package guillaume.agis.babylonhealth.usecase
 
 import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.model.Post
 import io.reactivex.Single
 
-interface PostsManager {
+interface PostsUseCase {
     /**
      *  Get the posts list from the server
      *  @return [Single] [List] [Post]  list of posts fetched

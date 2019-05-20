@@ -5,7 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
-import guillaume.agis.babylonhealth.manager.PostsManager
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.rule.BaseRule
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
@@ -17,7 +17,7 @@ class ListPostsViewModelTest : BaseRule() {
 
     private lateinit var viewModel: ListPostsViewModel
 
-    private val postManager = mock<PostsManager>()
+    private val postManager = mock<PostsUseCase>()
     private val posts = DataBuilder.providePostsList()
 
 

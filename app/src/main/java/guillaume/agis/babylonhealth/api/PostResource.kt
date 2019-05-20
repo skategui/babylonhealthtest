@@ -7,16 +7,13 @@ import io.reactivex.Single
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.Streaming
 
 /**
- * Service associated to the HTTP request.
- * Improvement : Could be split up by resources in the future (UserService, PostService, CommentService...)
- * to avoid having all the resources in one (messy) file.
- * I decided to keep it in 1 file  for this test, but I would obviously split it up for a bigger app :)
+ * Resources associated to the Post HTTP requests.
  */
-
-interface ApiService {
+interface PostResource {
 
     @GET("users/{userId}")
     fun getUserById(@Path("userId") userId: Int): Single<User>
@@ -30,6 +27,6 @@ interface ApiService {
     fun getPostsWithoutParsing(): Single<ResponseBody>
 
     @GET("comments")
-    fun getComments(): Single<List<Comment>>
+    fun getComments(@Query("postId") postId: Int): Single<List<Comment>>
 
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.api.io
 import guillaume.agis.babylonhealth.common.BaseViewModel
-import guillaume.agis.babylonhealth.manager.PostsManager
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.model.Post
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ import javax.inject.Inject
  */
 class PostDetailViewModel
 @Inject constructor(
-    private val postManager: PostsManager,
+    private val postUseCase: PostsUseCase,
     private val httpErrorUtils: HttpErrorUtils
 ) : BaseViewModel<PostDetailViewState>(PostDetailViewState()) {
 
@@ -56,7 +56,7 @@ class PostDetailViewModel
      */
     private fun loadComments(postId: Int) {
         disposables.add(
-            postManager.getCommentsByPostId(postId)
+            postUseCase.getCommentsByPostId(postId)
                 .io()
                 .subscribe({ comments ->
                     emitViewState(state.copy(comments = comments))
@@ -79,12 +79,12 @@ class PostDetailViewModel
 
     class Factory
     @Inject constructor(
-        private val postManager: PostsManager,
+        private val postUseCase: PostsUseCase,
         private val httpErrorUtils: HttpErrorUtils
     ) : ViewModelProvider.Factory {
         @SuppressWarnings("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PostDetailViewModel(postManager, httpErrorUtils) as T
+            return PostDetailViewModel(postUseCase, httpErrorUtils) as T
         }
     }
 }

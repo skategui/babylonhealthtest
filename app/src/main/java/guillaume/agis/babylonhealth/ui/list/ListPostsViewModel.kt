@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.api.io
 import guillaume.agis.babylonhealth.common.BaseViewModel
-import guillaume.agis.babylonhealth.manager.PostsManager
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.model.Post
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 class ListPostsViewModel
 @Inject constructor(
-    private val postManager: PostsManager,
+    private val postUseCase: PostsUseCase,
     private val httpErrorUtils: HttpErrorUtils
 ) : BaseViewModel<ListPostsViewState>(ListPostsViewState()),
     DefaultLifecycleObserver {
@@ -55,7 +55,7 @@ class ListPostsViewModel
      */
     private fun loadPosts() {
         disposables.add(
-            postManager.getPosts()
+            postUseCase.getPosts()
                 .doOnSubscribe { emitViewState(state.copy(isLoading = true)) }
                 .io()
                 .subscribe(this::success, this::postsErrors)
@@ -86,12 +86,12 @@ class ListPostsViewModel
 
     class Factory
     @Inject constructor(
-        private val postManager: PostsManager,
+        private val postUseCase: PostsUseCase,
         private val httpErrorUtils: HttpErrorUtils
     ) : ViewModelProvider.Factory {
         @SuppressWarnings("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ListPostsViewModel(postManager, httpErrorUtils) as T
+            return ListPostsViewModel(postUseCase, httpErrorUtils) as T
         }
     }
 }

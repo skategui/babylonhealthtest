@@ -1,138 +1,146 @@
 package guillaume.agis.babylonhealth.ui.list
 
+import android.app.Activity
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import com.zhuinden.espressohelper.*
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.DispatchingAndroidInjector_Factory
 import guillaume.agis.babylonhealth.BabylonApplication
 import guillaume.agis.babylonhealth.R
-import guillaume.agis.babylonhealth.manager.PostsManager
-import guillaume.agis.babylonhealth.ui.detail.PostDetailActivity
-import guillaume.agis.babylonhealth.ui.di.TestBabylonApp
-import guillaume.agis.babylonhealth.ui.di.TestBabylonAppComponent
+import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.ui.utils.CustomAssertions.Companion.hasItemCount
+import guillaume.agis.babylonhealth.ui.utils.DiffCallback
 import guillaume.agis.babylonhealth.ui.utils.RecyclerViewMatcher.Companion.withRecyclerView
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
-import org.junit.Before
+import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnit
 import java.net.UnknownHostException
-import javax.inject.Inject
+import javax.inject.Provider
 
 
 @RunWith(AndroidJUnit4::class)
-class ListPostsActivityTest {
+class EspressoListPostsActivityTest {
 
-    @get:Rule
-    @Suppress("unused")
-    internal var mockitoRule = MockitoJUnit.rule()
+    private val postUseCase = mock<PostsUseCase>()
 
-    @Inject
-    lateinit var postManager: PostsManager
+    private val postsAdapterMock = ListPostsAdapterImpl(DiffCallback())
 
-
-    private lateinit var testBabylonAppComponent: TestBabylonAppComponent
+    private val testViewModelFactory = ListPostsViewModel.Factory(postUseCase, HttpErrorUtils())
 
     @get:Rule
     val activityTestRule = ActivityTestRule<ListPostsActivity>(ListPostsActivity::class.java, false, false)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.initMocks(this)
-        val app = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestBabylonApp
-        app.initDagger()
-        testBabylonAppComponent = BabylonApplication.babylonAppComponent as TestBabylonAppComponent
-        testBabylonAppComponent.inject(app)
-        testBabylonAppComponent.inject(this)
+    // inject the mock and the created ViewModelFactory (with the PostUseCase mocked) into the view
+    private fun initDispatcherAndLaunchActivity() {
+        val myApp =
+            InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as BabylonApplication
+        myApp.dispatchingAndroidInjector = createFakeActivityInjector {
+            viewModelFactory = testViewModelFactory
+            postsAdapter = postsAdapterMock
+        }
+        activityTestRule.launchActivity(null)
     }
 
-
     @Test
-    fun should_display_list_posts() {
-
-        activityTestRule.launchActivity(null)
-
-        R.id.llState.checkIsNotDisplayed()
-        R.id.tvTitle.checkIsVisible()
-        R.id.tvTitle.checkHasAnyText()
-        R.id.tvBody.checkIsVisible()
-        R.id.tvBody.checkIsVisible()
-        R.id.cardView.checkIsClickable()
-        R.id.recyclerView.checkIsVisible()
-        onView(withId(R.id.recyclerView)).check(hasItemCount(1))
+    fun given_a_connexion_when_fetching_posts_then_show_the_posts_list() {
 
         val posts = DataBuilder.providePostsList()
+        whenever(postUseCase.getPosts()).thenReturn(Single.just(DataBuilder.providePostsList()))
+        initDispatcherAndLaunchActivity()
 
-        for (index in 0..posts.size)
-        {
+        onView(withId(R.id.llState)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.recyclerView)).check(matches(isDisplayed()))
+        onView(withId(R.id.recyclerView)).check(hasItemCount(posts.size))
+
+
+        for (index in 0 until posts.size) {
             val post = posts[index]
             onView(
                 withRecyclerView(R.id.recyclerView)
                     .atPositionOnView(index, R.id.tvTitle)
-            )
-                .check(matches(withText(post.title)))
+            ).check(matches(withText(post.title)))
 
             onView(
                 withRecyclerView(R.id.recyclerView)
                     .atPositionOnView(index, R.id.tvBody)
-            )
-                .check(matches(withText(post.body)))
+            ).check(matches(withText(post.body)))
+
+            onView(
+                withRecyclerView(R.id.recyclerView)
+                    .atPositionOnView(index, R.id.cardView)
+            ).check(matches(isClickable()))
         }
+    }
 
 
+    @Test
+    fun given_an_error_of_connexion_when_fetching_posts_then_show_error_msg() {
 
-        R.id.recyclerView.performActionOnRecyclerItemAtPosition<ListPostsAdapterImpl.PostViewHolder>(
-            0, ViewActions.click()
+        whenever(postUseCase.getPosts()).thenReturn(Single.error(UnknownHostException()))
+        initDispatcherAndLaunchActivity()
+
+
+        onView(withId(R.id.llState)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvStateTitle)).check(matches(withText(R.string.error_no_internet_connexion)))
+        onView(withId(R.id.recyclerView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.tvReload)).check(matches(isClickable()))
+        onView(withId(R.id.tvReload)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun given_an_empty_list_when_fetching_posts_then_show_empty_list_msg() {
+
+        whenever(postUseCase.getPosts()).thenReturn(Single.just(emptyList()))
+        initDispatcherAndLaunchActivity()
+
+        onView(withId(R.id.llState)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvStateTitle)).check(matches(withText(R.string.error_no_post_available)))
+        onView(withId(R.id.recyclerView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.tvReload)).check(matches(not(isDisplayed())))
+
+    }
+
+    @Test
+    fun given_an_error_when_fetching_posts_then_show_a_generic_error_msg() {
+
+        whenever(postUseCase.getPosts()).thenReturn(Single.error(Throwable("error")))
+
+        initDispatcherAndLaunchActivity()
+
+        onView(withId(R.id.llState)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvStateTitle)).check(matches(withText((R.string.error_try_again_later))))
+        onView(withId(R.id.recyclerView)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.tvReload)).check(matches(not(isDisplayed())))
+    }
+
+
+    // utils
+    private fun createFakeActivityInjector(block: ListPostsActivity.() -> Unit)
+            : DispatchingAndroidInjector<Activity> {
+        val injector = AndroidInjector<Activity> { instance ->
+            if (instance is ListPostsActivity) {
+                instance.block()
+            }
+        }
+        val factory = AndroidInjector.Factory<Activity> { injector }
+        val map = mapOf(
+            Pair<Class<*>,
+            Provider<AndroidInjector.Factory<*>>>(ListPostsActivity::class.java, Provider { factory })
         )
-        checkCurrentActivityIs<PostDetailActivity>()
-
-        // intended(allOf(hasComponent(PostDetailActivity::class.java.name), hasExtra(PostDetailActivity.POST_SELECTED, post)))
-    }
-
-
-    @Test
-    fun should_display_no_internet_connexion_msg() {
-
-        whenever(postManager.getPosts()).thenReturn(Single.error(UnknownHostException()))
-
-        activityTestRule.launchActivity(null)
-        R.id.llState.checkIsVisible()
-        R.id.tvStateTitle.checkContainsText(getCurrentActivity().getString(R.string.error_no_internet_connexion))
-        R.id.tvReload.checkIsClickable()
-    }
-
-    @Test
-    fun should_display_message_no_post() {
-
-        whenever(postManager.getPosts()).thenReturn(Single.just(emptyList()))
-
-        activityTestRule.launchActivity(null)
-
-        R.id.llState.checkIsVisible()
-        R.id.tvStateTitle.checkContainsText(getCurrentActivity().getString(R.string.error_no_post_available))
-        R.id.tvReload.checkIsNotDisplayed()
-    }
-
-    @Test
-    fun should_display_error_msg() {
-
-        whenever(postManager.getPosts()).thenReturn(Single.error(Throwable("error")))
-
-        activityTestRule.launchActivity(null)
-
-        R.id.llState.checkIsVisible()
-        R.id.tvStateTitle.checkContainsText(getCurrentActivity().getString(R.string.error_try_again_later))
-        R.id.tvReload.checkIsNotDisplayed()
+        return DispatchingAndroidInjector_Factory.newDispatchingAndroidInjector(map, emptyMap(), emptyMap(), emptyMap())
     }
 
 }
+
+

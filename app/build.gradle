@@ -32,11 +32,4 @@ dependencies {
     architectureComponents()
     view()
     testing()
-
-    androidTestCompile "org.jetbrains.kotlin:kotlin-test-junit:1.1.2-3"
-    androidTestCompile 'org.mockito:mockito-core:2.27.0'
-    androidTestImplementation 'com.github.VictorAlbertos:DeviceAnimationTestRule:0.0.2'
-
-    androidTestCompile 'org.mockito:mockito-android:2.27.0'
-    androidTestImplementation 'com.github.Zhuinden:espresso-helper:0.1.3'
 }

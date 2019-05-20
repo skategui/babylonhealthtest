@@ -1,6 +1,6 @@
 package guillaume.agis.babylonhealth.repo
 
-import guillaume.agis.babylonhealth.api.ApiService
+import guillaume.agis.babylonhealth.api.PostResource
 import guillaume.agis.babylonhealth.api.io
 import guillaume.agis.babylonhealth.api.toObjectsList
 import guillaume.agis.babylonhealth.model.Comment
@@ -13,7 +13,7 @@ import javax.inject.Inject
  * Post repository is responsible to make all the requests to the server associated to the Post
  */
 class PostsRepositoryImpl
-@Inject constructor(private val apiService: ApiService) : PostsRepository {
+@Inject constructor(private val postResource: PostResource) : PostsRepository {
 
     /**
      * Get the list of posts from the server
@@ -43,7 +43,7 @@ class PostsRepositoryImpl
         Source : https://proandroiddev.com/retrofitting-and-rxjaving-heavy-jsons-2c1fcfa6383c
          */
 
-        //  return apiService.getPosts().io()
+        //  return postResource.getPosts().io()
     }
 
     /**
@@ -52,7 +52,7 @@ class PostsRepositoryImpl
      *  @return [Single]  [List]  [PostDao] list of posts found
      */
     private fun getPostsWithoutParsing(): Single<List<PostDao>> {
-        return apiService.getPostsWithoutParsing()
+        return postResource.getPostsWithoutParsing()
             .io()
             .flatMap { body -> body.toObjectsList<PostDao>() }
     }
@@ -64,9 +64,8 @@ class PostsRepositoryImpl
      *  @return [Single]  [List]  [Comment] ist of comment found
      */
     override fun getCommentsByPostId(postId: Int): Single<List<Comment>> {
-        return apiService.getComments()
+        return postResource.getComments(postId)
             .io()
-            .map { it.filter { comments -> comments.postId == postId } }
     }
 
 }

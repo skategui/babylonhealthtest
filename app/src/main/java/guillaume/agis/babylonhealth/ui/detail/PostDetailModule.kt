@@ -5,16 +5,16 @@ import dagger.Module
 import dagger.Provides
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.di.DiffCallbackModule
-import guillaume.agis.babylonhealth.manager.PostsManager
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 
 @Module(includes = [DiffCallbackModule::class])
 class PostDetailModule {
 
     @Provides
     fun providesPostDetailViewModelFactory(
-        postManager: PostsManager,
+        postUseCase: PostsUseCase,
         httpErrorUtils: HttpErrorUtils
     ): ViewModelProvider.Factory {
-        return PostDetailViewModel.Factory(postManager, httpErrorUtils)
+        return PostDetailViewModel.Factory(postUseCase, httpErrorUtils)
     }
 }

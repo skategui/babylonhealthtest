@@ -6,4 +6,8 @@
     <color name="background">#EFEFEF</color>
     <color name="grey">#ADA7A7</color>
     <color name="black_transp">#83000000</color>
+    <color name="shadow_dark_end">#00000000</color>
+    <color name="shadow_dark_start">#28000000</color>
+    <color name="shadow_while_end">#ffffff</color>
+    <color name="shadow_while_start">#23FFFFFF</color>
 </resources>

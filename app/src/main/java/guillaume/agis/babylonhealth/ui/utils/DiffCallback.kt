@@ -3,8 +3,8 @@ package guillaume.agis.babylonhealth.ui.utils
 import androidx.recyclerview.widget.DiffUtil
 
 /**
- * Utils for recyclerview to check if there is a difference between 2 lists, containing in the recyclerview, to improve
- * the recyclerview performance
+ * Utils for recyclerview to check if there are some  difference between 2 lists, containing in the recyclerview, to improve
+ * the recyclerview performance, as it won't rebuild the view from scratch
  */
 class DiffCallback : DiffUtil.Callback() {
 

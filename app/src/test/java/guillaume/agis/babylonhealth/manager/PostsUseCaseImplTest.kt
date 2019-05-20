@@ -8,24 +8,26 @@ import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.model.Post
 import guillaume.agis.babylonhealth.repo.PostsRepository
 import guillaume.agis.babylonhealth.rule.BaseRule
+import guillaume.agis.babylonhealth.usecase.PostsUseCaseImpl
+import guillaume.agis.babylonhealth.usecase.UsersUseCase
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
 
-class PostsManagerImplTest : BaseRule() {
+class PostsUseCaseImplTest : BaseRule() {
 
-    private val usersManager = mock<UsersManager>()
+    private val usersManager = mock<UsersUseCase>()
     private val postsRepository = mock<PostsRepository>()
 
-    private lateinit var manager: PostsManagerImpl
+    private lateinit var manager: PostsUseCaseImpl
 
     private val user = DataBuilder.buildUser()
     private val postsDao = DataBuilder.providePostsDaoList()
 
     @Before
     fun setUp() {
-        manager = PostsManagerImpl(usersManager, postsRepository)
+        manager = PostsUseCaseImpl(usersManager, postsRepository)
 
         whenever(usersManager.getUserById(any())).thenReturn(Single.just(user))
         whenever(postsRepository.getPosts()).thenReturn(Single.just(postsDao))

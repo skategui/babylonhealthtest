@@ -111,6 +111,7 @@ class ListPostsActivity : BaseActivity() {
      * Inform the user to that the list of posts is empty
      */
     private fun displayEmptyListMessage() {
+        llState.visibility = View.VISIBLE
         animation.setAnimation(R.raw.empty_list_animation)
         tvStateTitle.text = getString(R.string.error_no_post_available)
         animation.playAnimation()
@@ -122,6 +123,7 @@ class ListPostsActivity : BaseActivity() {
      * Inform the user to the error
      */
     private fun displayError() {
+        llState.visibility = View.VISIBLE
         animation.setAnimation(R.raw.error_animation)
         tvStateTitle.text = getString(R.string.error_try_again_later)
         animation.playAnimation()

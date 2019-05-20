@@ -33,7 +33,7 @@ ext.deps = [
         ],
         'retrofit'   : [
                 'retrofit': "com.squareup.retrofit2:retrofit:$versions.retrofit",
-                'gson'   : "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+                'gson'    : "com.squareup.retrofit2:converter-gson:$versions.retrofit",
                 'rx'      : "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit",
         ],
         'okHttp'     : [
@@ -71,16 +71,19 @@ ext.deps = [
         ////////////////////////////////////////////////////////////////////////////////////////////
         'test'     : [
                 'jUnit'         : "junit:junit:$versions.jUnit",
+                'jUnitKotlin'   : "org.jetbrains.kotlin:kotlin-test-junit:$versions.jUnitKotlin",
                 'extJunit'      : "androidx.test.ext:junit:$versions.androidxtest",
-                'truth'      : "com.google.truth:truth:$versions.truth",
+                'truth'         : "com.google.truth:truth:$versions.truth",
                 'mockito'    : [
-                        'core'  : "org.mockito:mockito-core:$versions.mockito",
-                        'inline': "org.mockito:mockito-inline:$versions.mockito",
-                        'kotlin': "com.nhaarman.mockitokotlin2:mockito-kotlin:$versions.mockitokotlin",
+                        'core'     : "org.mockito:mockito-core:$versions.mockito",
+                        'android'  : "org.mockito:mockito-android:$versions.mockito",
+                        'inline'   : "org.mockito:mockito-inline:$versions.mockito",
+                        'kotlin'   : "com.nhaarman.mockitokotlin2:mockito-kotlin:$versions.mockitokotlin",
                 ],
-                'runner'        : "androidx.test:runner:$versions.runner",
-                'rules'         : "androidx.test:rules:$versions.androidxtest",
-                'espresso'      : "androidx.test.espresso:espresso-core:$versions.espresso",
-                'coretesting'   : "android.arch.core:core-testing:$versions.coretesting"
+                'runner'                : "androidx.test:runner:$versions.runner",
+                'rules'                 : "androidx.test:rules:$versions.androidxtest",
+                'espresso'              : "androidx.test.espresso:espresso-core:$versions.espresso",
+                'espressoIintents'      : "androidx.test.espresso:espresso-intents:$versions.espresso",
+                'coretesting'           : "android.arch.core:core-testing:$versions.coretesting"
         ]
 ]

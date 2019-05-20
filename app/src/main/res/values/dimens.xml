@@ -53,5 +53,6 @@
     <dimen name="comment_popup_title_textsize">16sp</dimen>
     <dimen name="comment_popup_title_margin_hor">10dp</dimen>
     <dimen name="comment_popup_title_margin_bottom">15dp</dimen>
+    <dimen name="bg_card_radius">8dp</dimen>
 
 </resources>

@@ -1,8 +1,9 @@
 package guillaume.agis.babylonhealth.repo
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import guillaume.agis.babylonhealth.api.ApiService
+import guillaume.agis.babylonhealth.api.PostResource
 import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.rule.BaseRule
 import guillaume.agis.babylonhealth.utils.DataBuilder
@@ -13,7 +14,7 @@ import org.junit.Test
 
 class PostsRepositoryImplTest : BaseRule() {
 
-    private val apiService = mock<ApiService>()
+    private val postResource = mock<PostResource>()
 
     private lateinit var manager: PostsRepositoryImpl
 
@@ -22,8 +23,8 @@ class PostsRepositoryImplTest : BaseRule() {
 
     @Before
     fun setUp() {
-        manager = PostsRepositoryImpl(apiService)
-        whenever(apiService.getPostsWithoutParsing()).thenReturn(
+        manager = PostsRepositoryImpl(postResource)
+        whenever(postResource.getPostsWithoutParsing()).thenReturn(
             Single.just(
                 ResponseBody.create(
                     null,
@@ -48,9 +49,12 @@ class PostsRepositoryImplTest : BaseRule() {
         val comment = DataBuilder.buildComment(DataBuilder.postId1)
         val comment2 = DataBuilder.buildComment(DataBuilder.postId2)
 
-        whenever(apiService.getComments()).thenReturn(Single.just(listOf(comment, comment2)))
+        whenever(postResource.getComments(comment.postId)).thenReturn(Single.just(listOf(comment)))
+        whenever(postResource.getComments(comment2.postId)).thenReturn(Single.just(listOf(comment2)))
 
         val postIdWithoutCommentsAssociated = 213123
+
+        whenever(postResource.getComments(postIdWithoutCommentsAssociated)).thenReturn(Single.just(emptyList()))
 
         getCommentsByPostId(comment.postId, listOf(comment))
         getCommentsByPostId(comment2.postId, listOf(comment2))

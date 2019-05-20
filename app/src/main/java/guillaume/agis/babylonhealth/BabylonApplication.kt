@@ -8,21 +8,22 @@ import guillaume.agis.babylonhealth.di.BabylonAppComponent
 import guillaume.agis.babylonhealth.di.DaggerBabylonAppComponent
 import javax.inject.Inject
 
-open class BabylonApplication : Application(), HasActivityInjector {
+// App , init dagger and the AndroidInjector
+class BabylonApplication : Application(), HasActivityInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
 
     override fun onCreate() {
         super.onCreate()
-
         initDagger()
-
     }
 
-    open fun initDagger() {
-        babylonAppComponent = DaggerBabylonAppComponent.builder()
+    private fun initDagger() {
+        DaggerBabylonAppComponent.builder()
+            .context(this)
             .build()
+            .also { babylonAppComponent = it }
         babylonAppComponent.inject(this)
     }
 
@@ -32,6 +33,6 @@ open class BabylonApplication : Application(), HasActivityInjector {
 
     companion object {
         @JvmStatic
-         lateinit var babylonAppComponent: BabylonAppComponent
+        lateinit var babylonAppComponent: BabylonAppComponent
     }
 }
