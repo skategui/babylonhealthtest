@@ -22,6 +22,7 @@
 
         <guillaume.agis.babylonhealth.ui.customview.GlideImageView
             android:id="@+id/ivAvatar"
+            android:contentDescription="@string/item_post_avatar_content_description"
             android:layout_width="@dimen/card_avatar_size"
             android:layout_height="@dimen/card_avatar_size"
             tools:src="@drawable/logo" />
@@ -29,6 +30,7 @@
         <TextView
             android:id="@+id/tvTitle"
             style="@style/TextTitle"
+            android:contentDescription="@string/item_post_title_content_description"
             android:layout_marginStart="@dimen/card_margin_hor"
             android:layout_marginEnd="@dimen/card_margin_hor"
             android:layout_toEndOf="@+id/ivAvatar"
@@ -38,6 +40,7 @@
             android:id="@+id/tvBody"
             style="@style/TextBody"
             android:layout_below="@+id/tvTitle"
+            android:contentDescription="@string/item_post_body_content_description"
             android:layout_marginStart="@dimen/card_margin_hor"
             android:layout_marginTop="@dimen/card_margin_top"
             android:ellipsize="end"
@@ -64,11 +67,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/item_post_icon_content_description"
                 android:src="@drawable/outline_mode_comment_white_24"
                 android:tint="@color/grey" />
 
             <TextView
                 android:layout_width="wrap_content"
+                android:contentDescription="@string/item_post_comment_content_description"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/item_post_see_more_margin_left"
                 android:text="@string/card_post_see_more_btn" />

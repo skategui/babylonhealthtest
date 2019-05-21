@@ -7,7 +7,7 @@ The app should have two screens, as follows:
 A screen with a list of clickable posts with at least the post title
 
 
-A detail screen for the selected post with at least the follow:
+A detail screen for the selected post with at least the following:
 - Post title
 - Post body
 - Author name
@@ -18,13 +18,13 @@ A detail screen for the selected post with at least the follow:
 #### The Lists post Activity ([shortcut link](https://github.com/skategui/babylonhealthtest/tree/master/app/src/main/java/guillaume/agis/babylonhealth/ui/list))
   
  Display a message "In progress" with a lottie animation while fetching the list of posts from the server and if we do receive a list of posts, the list is displayed.
- For each row, the user avatar is load with the post's title and the post's body. Each row is clickable and goes to the Post Detail Activity.
+ For each row, the user avatar is loaded with the post's title and the post's body. Each row is clickable and goes to the Post Detail Activity.
  In the case there is a network issue, an error message with a lottie animation is displayed with a button to have the possibility to refresh the view.
- in the case the list of posts is empty, a message is displayed to the user informing him the list is empty.
+ in the case the list of posts is empty, a message is displayed to the user informing him that list is empty.
  
  #### The Post Detail Activity ([shortcut link](https://github.com/skategui/babylonhealthtest/tree/master/app/src/main/java/guillaume/agis/babylonhealth/ui/detail))
 
-This view display the user's avatar, fullname in the header with an icon to have the opportunity to send him an email, if his email has been filled.
+This view display the user's avatar, full name in the header with an icon to have the opportunity to send him an email, if his email has been filled.
 The body of the view contains the post's title with the post's body, scrollable.
 At the bottom, fixed, is a button to display the list of comments, if any. This button is not displayed if the list if empty, or there was a connexion issue while loading the comments.
 When clicking on the button, it display the comments list (a custom view) as a popup like "FB comments".
@@ -38,8 +38,8 @@ When clicking on the button, it display the comments list (a custom view) as a p
 - Dagger 2 
 - RxAndroid
 - Retrofit
-- Espresso (by faking the AndroidInjector, instead of using a "EspressoDaggerComponent" )
-- JUnit (with Truth)
+- Espresso 
+- JUnit 
 - Kotlin 
 - LifeCycle
 - Custom views (to encapsulate Glide and to display the list of comments as a popup, ([shortcut link](https://github.com/skategui/babylonhealthtest/tree/master/app/src/main/java/guillaume/agis/babylonhealth/ui/customview)) ).
@@ -47,27 +47,26 @@ When clicking on the button, it display the comments list (a custom view) as a p
 ### Project
 
 - config folder contains everything related to the config of the app, from the variables used in debug and prod to the group of gradle dependencies.
-- app/src/androidTest contains the espresso tests (**6 espresso tests**)
+- app/src/androidTest contains the espresso tests (**6 espresso tests**) ([fake the AndroidInjector](https://github.com/skategui/babylonhealthtest/blob/master/app/src/androidTest/kotlin/guillaume/agis/babylonhealth/ui/list/EspressoListPostsActivityTest.kt#L49) instead of using a "EspressoDaggerComponent" )
 - app/src/sharedTest contains the classes shared and used in unit and espresso tests
-- app/src/test contains the unit tests. (**34 unit tests**)
+- app/src/test contains the unit tests. (**30 unit tests**) with [Truth](https://github.com/google/truth)
 
-- api folder contains all the classes responsible to create an HTTPClient and make requests to the server
-- Common folder contains the shared ViewModel and shared Activity
-- Di folder contains everything related to dagger2 and its modules to inject the dependencies into the right places.
-- model folder contains all the models
-- Repo folder contains all the classes responsible to make the http requests to the server
-- Ui folder contains all activities(one feature per folder) and the custom views.
-- Usecase folder contains all the classes responsible for some business logic and interactions between the repos, use cases etc. 
-- Datatore folder contains all the classes that store data locally (could use room in the future)
+### Layouts decision
+
+- [activity_post_detail](https://github.com/skategui/babylonhealthtest/blob/master/app/src/main/res/layout/activity_post_detail.xml) and [activity_list_posts](https://github.com/skategui/babylonhealthtest/blob/master/app/src/main/res/layout/activity_list_posts.xml) are a ConstraintLayout, the most performant layout for complex UI as it's flatten the view (no nested views).
+- [item_comment](https://github.com/skategui/babylonhealthtest/blob/master/app/src/main/res/layout/item_comment.xml) is a RelativeLayout, because it's a simple UI, with no nested views, used in a recyclerview. ConstraintLayout is not really efficient in a recyclerview as it takes time to inflate constraintLayout because of the constraints.
+- [item_post](https://github.com/skategui/babylonhealthtest/blob/master/app/src/main/res/layout/item_post.xml) is a CardView, used in a recyclerview. ConstraintLayout is not really efficient in a recyclerview as it takes time to inflate ConstraintLayout because of the constraints.
+But in other context, ConstraintLayout would have been a good pick as the view could be flatten.
+
 
 ### Improvements made
 
 - Compress images
 - When loading the posts list, does not map the full response into a list of objects but instead use a ResponseBody(see [PostsRepositoryImpl](https://github.com/skategui/babylonhealthtest/blob/master/app/src/main/java/guillaume/agis/babylonhealth/repo/PostsRepositoryImpl.kt) for the full comment).
-It has improve the speed of the request by 10x and use 17% less memory.
+It has improved the speed of the request by 10x and use 17% less memory.
 - Use annotation @Binds instead of @Provides when possible to have less generated files from Dagger2.
 - Does not reload users already fetched from the server. Currently store in memory but could use room if we wish to have some data consistency and be able to use the app offline.
-- Network : Cache the requests (but all the same with age limit)
+- Network : Cache the requests for 10 minutes in order to not remake the request to the server, then consume less battery and get the data faster.
 
 ### Improvements to make in the future
 
@@ -81,7 +80,7 @@ Also, each module will be able to use the config, then use the same version of e
 Benchmark of the performance : https://codeburst.io/json-vs-protocol-buffers-vs-flatbuffers-a4247f8bda6f
 - Offline :  Usage of **Room** to store some data and have some consistency between sessions, also in order to preload some views and be able to use the app offline. (better UX)
 
-- Network / Coroutine : Use coroutine instead of RxAndroid for the request calls. Coroutine is lighter, faster, and consume less memory. Better use RxAndroid when we wish to have a reactive app (with Flowable for instance.) [benchmark available here](https://proandroiddev.com/kotlin-coroutines-vs-rxjava-an-initial-performance-test-68160cfc6723)
+- Network / Coroutine : Use coroutine instead of RxAndroid for the request calls. Coroutine is lighter, faster and consume less memory. Better use RxAndroid when we wish to have a reactive app (with Flowable for instance.) [benchmark available here](https://proandroiddev.com/kotlin-coroutines-vs-rxjava-an-initial-performance-test-68160cfc6723)
 
 - Requests content : Populate object in the JSON instead of providing only the object's id and make another request to get the full object.
   For instance, in the Post object we could have received the user object instead of only the Id ,or only **the fields needed** to have smaller response).

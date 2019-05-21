@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- content description for users with disability -->
+    <string name="list_post_state_title_content_description">loading indication</string>
+    <string name="list_post_reload_button_content_description">reload button</string>
+    <string name="list_post_listview_content_description">list of posts</string>
+    <string name="item_post_title_content_description">post title</string>
+    <string name="item_post_body_content_description">post body</string>
+    <string name="item_post_icon_content_description">post icon comment</string>
+    <string name="item_post_comment_content_description">post comment text</string>
+    <string name="item_post_avatar_content_description">avatar of the author</string>
+    <string name="item_comment_avatar_content_description">commenter\'s avatar</string>
+    <string name="item_comment_fullname_content_description">commenter fullname</string>
+    <string name="item_comment_comenter_comment_content_description">commenter\'s comment</string>
+    <string name="post_detail_author_avatar_content_description">Author\'s avatar</string>
+    <string name="post_detail_author_fullname_content_description">Author\'s Full name</string>
+    <string name="post_detail_icon_email_content_description">Send email icon</string>
+    <string name="post_detail_post_title_content_description">Post title</string>
+    <string name="post_detail_post_body_content_description">Post body</string>
+    <string name="post_detail_comments_button_content_description">Comments button</string>
+</resources>

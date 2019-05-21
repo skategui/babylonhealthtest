@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 
 /**
- * Post Manager is responsible to manage all the business logic related to the Post
+ * Post Use Case is responsible to manage all the business logic related to the Post
  * such as associated a user to a loaded post (in this example)
  */
 class PostsUseCaseImpl

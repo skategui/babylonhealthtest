@@ -15,9 +15,6 @@ import retrofit2.http.Streaming
  */
 interface PostResource {
 
-    @GET("users/{userId}")
-    fun getUserById(@Path("userId") userId: Int): Single<User>
-
     @GET("posts")
     fun getPosts(): Single<List<PostDao>>
 

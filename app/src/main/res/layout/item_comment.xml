@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/card_padding"
-    android:paddingTop="@dimen/card_padding"
-    android:paddingRight="@dimen/card_padding"
-    android:id="@+id/relativeLayout">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/card_padding"
+                android:paddingTop="@dimen/card_padding"
+                android:paddingRight="@dimen/card_padding"
+                android:id="@+id/relativeLayout">
 
     <guillaume.agis.babylonhealth.ui.customview.GlideImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="@dimen/card_comment_avatar_size"
-        android:layout_height="@dimen/card_comment_avatar_size"
-        tools:src="@drawable/logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            android:id="@+id/ivAvatar"
+            android:layout_centerVertical="true"
+            android:layout_width="@dimen/card_comment_avatar_size"
+            android:contentDescription="@string/item_comment_avatar_content_description"
+            android:layout_height="@dimen/card_comment_avatar_size"
+    />
 
     <TextView
-        android:id="@+id/tvFullName"
-        style="@style/TextTitle"
-        android:layout_width="0dp"
-        android:layout_marginStart="@dimen/card_margin_hor"
-        android:layout_marginEnd="@dimen/card_margin_hor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="title" />
+            android:layout_height="wrap_content"
+            android:id="@+id/tvFullName"
+            tools:text="title"
+            style="@style/TextTitle"
+            android:layout_toEndOf="@+id/ivAvatar"
+            android:contentDescription="@string/item_comment_fullname_content_description"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/card_margin_hor"
+            android:layout_marginEnd="@dimen/card_margin_hor"
+    />
 
     <TextView
-        android:id="@+id/tvBody"
-        style="@style/TextBody"
-        android:layout_width="0dp"
-        android:layout_marginStart="@dimen/card_margin_hor"
-        android:layout_marginTop="@dimen/card_margin_top"
-        android:layout_marginEnd="@dimen/card_margin_hor"
-        android:layout_toEndOf="@+id/ivAvatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar"
-        app:layout_constraintTop_toBottomOf="@+id/tvFullName"
-        tools:text="dummy body" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/tvBody"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/ivAvatar"
+            android:contentDescription="@string/item_comment_comenter_comment_content_description"
+            android:layout_below="@+id/tvFullName"
+            android:layout_width="match_parent"
+            style="@style/TextBody"
+            tools:text="dummy body"
+            android:layout_marginStart="@dimen/card_margin_hor"
+            android:layout_marginEnd="@dimen/card_margin_hor"
+    />
+</RelativeLayout>

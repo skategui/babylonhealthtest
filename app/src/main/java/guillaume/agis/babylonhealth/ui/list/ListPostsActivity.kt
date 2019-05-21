@@ -87,25 +87,16 @@ class ListPostsActivity : BaseActivity() {
      * @param viewState current state of the view
      */
     private fun render(viewState: ListPostsViewState) {
-        renderUI(viewState)
-        renderAction(viewState)
-    }
-
-    /**
-     * Display the action to take given the current state of the view
-     * @param viewState current state of the view
-     */
-    private fun renderAction(viewState: ListPostsViewState) {
-        when (viewState.action) {
-            is Actions.None -> {
-            }
-            is Actions.NoInternet -> noInternet()
-            is Actions.OpenPostDetail -> openPostDetail(viewState.action.post)
-            is Actions.Error -> displayError()
-            is Actions.DisplayEmptyListMessage -> displayEmptyListMessage()
+        initViews()
+        when (viewState) {
+            is ListPostsViewState.ShowLoading -> checkLoadingState(true)
+            is ListPostsViewState.DisplayPostsList -> postsAdapter.update(viewState.posts)
+            is ListPostsViewState.NoInternet -> noInternet()
+            is ListPostsViewState.OpenPostDetail -> openPostDetail(viewState.post)
+            is ListPostsViewState.Error -> displayError()
+            is ListPostsViewState.DisplayEmptyListMessage -> displayEmptyListMessage()
         }
     }
-
 
     /**
      * Inform the user to that the list of posts is empty
@@ -134,19 +125,10 @@ class ListPostsActivity : BaseActivity() {
      * put the views in their original state
      */
     private fun initViews() {
+        checkLoadingState(false)
         animation.clearAnimation()
         recyclerView.visibility = View.VISIBLE
         tvReload.visibility = View.GONE
-    }
-
-    /**
-     * Render the view given the current state
-     * @param viewState current state of the view
-     */
-    private fun renderUI(viewState: ListPostsViewState) {
-        initViews()
-        postsAdapter.update(viewState.posts)
-        checkLoadingState(viewState.isLoading)
     }
 
     /**
@@ -169,6 +151,7 @@ class ListPostsActivity : BaseActivity() {
      * Inform the user to that he lost the internet connexion
      */
     private fun noInternet() {
+        llState.visibility = View.VISIBLE
         tvStateTitle.text = getString(R.string.error_no_internet_connexion)
         animation.setAnimation(R.raw.error_animation)
         tvReload.visibility = View.VISIBLE

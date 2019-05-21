@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModelProvider
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.api.io
 import guillaume.agis.babylonhealth.common.BaseViewModel
-import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.model.Post
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import javax.inject.Inject
 
 
@@ -19,11 +19,8 @@ class ListPostsViewModel
 @Inject constructor(
     private val postUseCase: PostsUseCase,
     private val httpErrorUtils: HttpErrorUtils
-) : BaseViewModel<ListPostsViewState>(ListPostsViewState()),
+) : BaseViewModel<ListPostsViewState>(),
     DefaultLifecycleObserver {
-
-    // clean the action
-    override fun resetActions() = state.copy(action = Actions.None)
 
     /**
      * Associated to the lifecycle of the activity; load the list of posts when the activity
@@ -48,15 +45,16 @@ class ListPostsViewModel
      *  @param post post associated to the row clicked
      */
     fun onRowClicked(post: Post) {
-        emitViewState(state.copy(action = Actions.OpenPostDetail(post), isLoading = false))
+        emitViewState(ListPostsViewState.OpenPostDetail(post))
     }
+
     /**
      * Load the list of posts to display
      */
     private fun loadPosts() {
         disposables.add(
             postUseCase.getPosts()
-                .doOnSubscribe { emitViewState(state.copy(isLoading = true)) }
+                .doOnSubscribe { emitViewState(ListPostsViewState.ShowLoading) }
                 .io()
                 .subscribe(this::success, this::postsErrors)
         )
@@ -68,9 +66,9 @@ class ListPostsViewModel
      */
     private fun success(posts: List<Post>) {
         if (posts.isEmpty())
-            emitViewState(state.copy(action = Actions.DisplayEmptyListMessage, isLoading = false))
+            emitViewState(ListPostsViewState.DisplayEmptyListMessage)
         else
-            emitViewState(state.copy(posts = posts, isLoading = false))
+            emitViewState(ListPostsViewState.DisplayPostsList(posts))
     }
 
     /**
@@ -78,8 +76,8 @@ class ListPostsViewModel
      */
     private fun postsErrors(throwable: Throwable) {
         when (httpErrorUtils.hasLostInternet(throwable)) {
-            true -> emitViewState(state.copy(action = Actions.NoInternet))
-            false -> emitViewState(state.copy(action = Actions.Error(throwable.message), isLoading = false))
+            true -> emitViewState(ListPostsViewState.NoInternet)
+            false -> emitViewState(ListPostsViewState.Error(throwable.message))
         }
     }
 

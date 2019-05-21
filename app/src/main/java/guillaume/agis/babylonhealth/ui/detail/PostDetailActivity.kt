@@ -38,15 +38,13 @@ class PostDetailActivity : BaseActivity() {
     }
 
     /**
-     * Get the post from the intent , if not found close the view
+     * Get the post from the intent
      */
     private fun getPostFromIntent() {
-        val post = intent?.extras?.get(POST_SELECTED) as Post?
+        val post = intent?.extras?.get(POST_SELECTED) as Post
 
-        post?.let {
-            initView()
-            initViewModel(it)
-        } ?: finish()
+        initView()
+        initViewModel(post)
     }
 
     /**
@@ -81,7 +79,7 @@ class PostDetailActivity : BaseActivity() {
      * init listeners
      */
     private fun initListeners() {
-        llSeeComments.setOnClickListener { viewModel.onCommentBtnClicked() }
+        tvCommentNbr.setOnClickListener { viewModel.onCommentBtnClicked() }
         tvEmail.setOnClickListener { viewModel.onEmailClicked() }
     }
 
@@ -107,36 +105,16 @@ class PostDetailActivity : BaseActivity() {
      * @param viewState current state of the view
      */
     private fun render(viewState: PostDetailViewState) {
-        renderUI(viewState)
-        takeActions(viewState)
-    }
-
-    /**
-     * Display the action to take given the current state of the view
-     * @param viewState current state of the view
-     */
-    private fun takeActions(viewState: PostDetailViewState) {
-        when (viewState.action) {
-            is Actions.None -> {}
-            is Actions.NoInternet -> noInternet()
-            is Actions.Error -> displayErrorMsg()
-            is Actions.OpenEmail -> openEmail(viewState.action.email)
-            is Actions.SeeComments -> seeComments(viewState.post, viewState.comments)
-        }
-    }
-
-    /**
-     * Render the view given the current state
-     * @param viewState current state of the view
-     */
-    private fun renderUI(viewState: PostDetailViewState) {
-        renderCommentsSection(viewState)
-
-        tvEmail.visibility = View.GONE
-
-        viewState.post?.let {
-            renderPostInfo(it)
-            renderProfileInfo(it.user)
+        when (viewState) {
+            is PostDetailViewState.RenderPost -> {
+                renderPostInfo(viewState.post)
+                renderProfileInfo(viewState.post.user)
+            }
+            is PostDetailViewState.DisplayCommentsNb -> renderCommentsSection(viewState.nbComment)
+            is PostDetailViewState.NoInternet -> noInternet()
+            is PostDetailViewState.DisplayError -> displayErrorMsg()
+            is PostDetailViewState.OpenEmail -> openEmail(viewState.email)
+            is PostDetailViewState.SeeComments -> seeComments(viewState.post, viewState.comments)
         }
     }
 
@@ -161,16 +139,17 @@ class PostDetailActivity : BaseActivity() {
 
     /**
      * Render the section associated to the comments given the current state of the view
-     * @param viewState current state of the view
+     * @param nbComment nb comment associated to this post
      */
-    private fun renderCommentsSection(viewState: PostDetailViewState) {
-        tvCommentNbr.text = String.format(getString(R.string.post_detail_see_comments), viewState.comments.size)
-        if (viewState.comments.isEmpty())
-            llSeeComments.visibility = View.GONE
-        else
-            llSeeComments.visibility = View.VISIBLE
-    }
+    private fun renderCommentsSection(nbComment: Int) {
+        if (nbComment == 0) {
+            commentGroup.visibility = View.GONE
+        } else {
+            tvCommentNbr.text = String.format(getString(R.string.post_detail_see_comments), nbComment)
+            commentGroup.visibility = View.VISIBLE
+        }
 
+    }
 
 
     /**
@@ -185,8 +164,7 @@ class PostDetailActivity : BaseActivity() {
     /**
      * Inform the user to the error
      */
-    private fun displayErrorMsg()
-    {
+    private fun displayErrorMsg() {
         Toast.makeText(this, getString(R.string.error_try_again_later), Toast.LENGTH_LONG)
             .show()
     }
@@ -204,7 +182,6 @@ class PostDetailActivity : BaseActivity() {
     }
 
 
-
     /**
      * Inform the user to that he lost the internet connexion
      */
@@ -214,9 +191,7 @@ class PostDetailActivity : BaseActivity() {
     }
 
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // handle arrow click here
         if (item.itemId === android.R.id.home) {
             finish()
         }
@@ -228,7 +203,7 @@ class PostDetailActivity : BaseActivity() {
     companion object {
 
         @VisibleForTesting
-         const val POST_SELECTED = "post_selected"
+        const val POST_SELECTED = "post_selected"
 
         /**
          * Start the activity with the post associated to the view

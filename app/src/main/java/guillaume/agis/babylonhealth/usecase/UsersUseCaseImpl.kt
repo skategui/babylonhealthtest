@@ -7,7 +7,7 @@ import io.reactivex.Single
 import javax.inject.Inject
 
 /**
- * User Manager is responsible to manage all the business logic related to the User
+ * User UseCae is responsible to manage all the business logic related to the User
  */
 class UsersUseCaseImpl
 @Inject constructor(private val usersRepository: UsersRepository,

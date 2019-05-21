@@ -1,12 +1,10 @@
-package guillaume.agis.babylonhealth.manager
+package guillaume.agis.babylonhealth.usecase
 
 import com.nhaarman.mockitokotlin2.*
-import guillaume.agis.babylonhealth.datastore.UsersDatastore
 import guillaume.agis.babylonhealth.datastore.UsersDatastoreImpl
 import guillaume.agis.babylonhealth.model.User
 import guillaume.agis.babylonhealth.repo.UsersRepository
 import guillaume.agis.babylonhealth.rule.BaseRule
-import guillaume.agis.babylonhealth.usecase.UsersUseCaseImpl
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
 import org.junit.Before
@@ -15,7 +13,6 @@ import org.junit.Test
 class UsersUseCaseImplTest : BaseRule() {
 
     private val usersRepository = mock<UsersRepository>()
-    private val usersDatastore = UsersDatastoreImpl()
 
     private lateinit var manager: UsersUseCaseImpl
 
@@ -24,7 +21,7 @@ class UsersUseCaseImplTest : BaseRule() {
 
     @Before
     fun setUp() {
-        manager = UsersUseCaseImpl(usersRepository, usersDatastore)
+        manager = UsersUseCaseImpl(usersRepository, UsersDatastoreImpl())
         whenever(usersRepository.getUserById(eq(user.id))).thenReturn(Single.just(user))
         whenever(usersRepository.getUserById(eq(user2.id))).thenReturn(Single.just(user2))
 

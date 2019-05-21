@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
 import guillaume.agis.babylonhealth.api.io
 import guillaume.agis.babylonhealth.common.BaseViewModel
-import guillaume.agis.babylonhealth.usecase.PostsUseCase
+import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.model.Post
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import javax.inject.Inject
 
 /**
@@ -16,12 +17,10 @@ class PostDetailViewModel
 @Inject constructor(
     private val postUseCase: PostsUseCase,
     private val httpErrorUtils: HttpErrorUtils
-) : BaseViewModel<PostDetailViewState>(PostDetailViewState()) {
+) : BaseViewModel<PostDetailViewState>() {
 
     private lateinit var post: Post
-
-    // clean the action
-    override fun resetActions() = state.copy(action = Actions.None)
+    private val comments: ArrayList<Comment> = ArrayList()
 
     /**
      * set the post to load the comments associated to it
@@ -29,7 +28,7 @@ class PostDetailViewModel
      */
     fun setPost(post: Post) {
         this.post = post
-        emitViewState(state.copy(post = post))
+        emitViewState(PostDetailViewState.RenderPost(post))
         loadComments(post.id)
     }
 
@@ -38,16 +37,14 @@ class PostDetailViewModel
      * Emit a the SeeComments action when the comment button is clicked
      */
     fun onCommentBtnClicked() {
-        emitViewState(state.copy(action = Actions.SeeComments))
+        emitViewState(PostDetailViewState.SeeComments(post, comments))
     }
 
     /**
      * Emit a the OpenEmail action when the email button is clicked
      */
     fun onEmailClicked() {
-        emitViewState(
-            state.copy(action = Actions.OpenEmail(email = post.user.email))
-        )
+        emitViewState(PostDetailViewState.OpenEmail(email = post.user.email))
     }
 
     /**
@@ -59,7 +56,9 @@ class PostDetailViewModel
             postUseCase.getCommentsByPostId(postId)
                 .io()
                 .subscribe({ comments ->
-                    emitViewState(state.copy(comments = comments))
+                    this.comments.clear()
+                    this.comments.addAll(comments)
+                    emitViewState(PostDetailViewState.DisplayCommentsNb(comments.size))
                 }, this::postsErrors)
         )
     }
@@ -71,8 +70,8 @@ class PostDetailViewModel
     private fun postsErrors(throwable: Throwable) {
 
         when (httpErrorUtils.hasLostInternet(throwable)) {
-            true -> emitViewState(state.copy(action = Actions.NoInternet))
-            false -> emitViewState(state.copy(action = Actions.Error(throwable.message)))
+            true -> emitViewState(PostDetailViewState.NoInternet)
+            false -> emitViewState(PostDetailViewState.DisplayError(throwable.message))
         }
     }
 

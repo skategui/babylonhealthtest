@@ -140,7 +140,6 @@ class EspressoPostDetailActivityTest {
         onView(withId(R.id.tvTitle)).check(matches(withText(post.title)))
         onView(withId(R.id.tvBody)).check(matches(withText(post.body)))
 
-        onView(withId(R.id.llSeeComments)).check(matches(not(isDisplayed())))
         onView(withId(R.id.commentsList)).check(matches(not((isDisplayed()))))
         onView(withId(R.id.popup_title)).check(matches(not(isDisplayed())))
         onView(withId(R.id.recyclerCommentsView)).check(matches(not(isDisplayed())))

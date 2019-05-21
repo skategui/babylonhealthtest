@@ -1,134 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
-
-    <RelativeLayout
-        android:id="@+id/rlHeader"
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/post_detail_header_height"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
-        <View
+
+    <View android:id="@+id/header"
+          android:layout_width="0dp"
+          android:layout_height="@dimen/post_detail_header_height"
+          android:background="@color/colorPrimary"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/post_detail_header_height"
+            android:background="@drawable/shadow_dark"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/shadow_dark" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-        <LinearLayout
+    <guillaume.agis.babylonhealth.ui.customview.GlideImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="@dimen/post_detail_avatar_size"
+            android:layout_height="@dimen/post_detail_avatar_size"
+            tools:src="@drawable/logo"
+            app:layout_constraintBottom_toTopOf="@+id/scrollView"
+            app:layout_constraintTop_toTopOf="@+id/commentsList"
+            android:contentDescription="@string/post_detail_author_avatar_content_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.33"/>
+
+    <TextView
+            android:id="@+id/tvFullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <guillaume.agis.babylonhealth.ui.customview.GlideImageView
-                android:id="@+id/ivAvatar"
-                android:layout_width="@dimen/post_detail_avatar_size"
-                android:layout_height="@dimen/post_detail_avatar_size"
-                tools:src="@drawable/logo" />
-
-            <TextView
-                android:id="@+id/tvFullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/post_detail_fullname_margin_left"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/post_detail_fullname_textsize"
-                tools:text="full name" />
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/post_detail_fullname_textsize"
+            android:contentDescription="@string/post_detail_author_fullname_content_description"
+            tools:text="full name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/ivAvatar"
+            app:layout_constraintBottom_toBottomOf="@+id/header"/>
 
 
-        </LinearLayout>
-
-
-        <ImageView
+    <ImageView
             android:id="@+id/tvEmail"
             android:layout_width="@dimen/post_detail_email_icon_size"
             android:layout_height="@dimen/post_detail_email_icon_size"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/post_detail_email_icon_margin"
-            android:layout_marginBottom="@dimen/post_detail_email_icon_margin"
             android:padding="@dimen/post_detail_email_icon_padding"
-            android:src="@drawable/baseline_email_white_36dp" />
+            android:src="@drawable/baseline_email_white_36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/post_detail_icon_email_content_description"
+            android:layout_marginEnd="@dimen/post_detail_email_icon_margin"
+            android:layout_marginBottom="@dimen/post_detail_email_icon_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/header"/>
 
-
-    </RelativeLayout>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/llSeeComments"
-        android:layout_below="@+id/rlHeader">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/tvCommentNbr"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintEnd_toStartOf="@+id/header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/scrollView">
 
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/post_detail_content_padding">
-
-            <TextView
-                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/post_detail_title_textsize"
-                tools:text="dummy title" />
+                android:orientation="vertical"
+                android:padding="@dimen/post_detail_content_padding">
 
             <TextView
-                android:id="@+id/tvBody"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/post_detail_body_margin_top"
-                android:fontFamily="sans-serif"
-                android:textSize="@dimen/post_detail_body_textsize"
-                tools:text="dummy body" />
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/post_detail_post_title_content_description"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/post_detail_title_textsize"
+                    tools:text="dummy title"/>
 
+            <TextView
+                    android:id="@+id/tvBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/post_detail_body_margin_top"
+                    android:fontFamily="sans-serif"
+                    android:contentDescription="@string/post_detail_post_body_content_description"
+                    android:textSize="@dimen/post_detail_body_textsize"
+                    tools:text="dummy body"/>
 
         </LinearLayout>
-
     </ScrollView>
 
-    <RelativeLayout
-        android:id="@+id/llSeeComments"
-        style="@style/CTAButton"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/post_detail_comment_btn_margin"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
 
+    <TextView
+            android:id="@+id/tvCommentNbr"
+            style="@style/CTAButtonNoEffect"
+            android:contentDescription="@string/post_detail_comments_button_content_description"
+            android:text="@string/post_detail_see_comments"
+            android:layout_margin="@dimen/post_detail_comment_btn_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <com.airbnb.lottie.LottieAnimationView
+    <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/commentAnimation"
             android:layout_width="@dimen/post_detail_comment_anim_size"
             android:layout_height="@dimen/post_detail_comment_anim_size"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/post_detail_comment_anim_margin_left"
             android:scaleType="centerCrop"
-            app:lottie_rawRes="@raw/comment_icon_animation" />
+            app:lottie_rawRes="@raw/comment_icon_animation"
+            app:layout_constraintBottom_toBottomOf="@+id/tvCommentNbr"
+            app:layout_constraintTop_toTopOf="@+id/tvCommentNbr"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/post_detail_btn_icon_margin_left"/>
 
-        <TextView
-            android:id="@+id/tvCommentNbr"
-            style="@style/CTAButtonNoEffect"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/post_detail_see_comments" />
-
-    </RelativeLayout>
 
     <guillaume.agis.babylonhealth.ui.customview.CommentsListView
-        android:id="@+id/commentsList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:id="@+id/commentsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
+    <androidx.constraintlayout.widget.Group
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentGroup"/>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

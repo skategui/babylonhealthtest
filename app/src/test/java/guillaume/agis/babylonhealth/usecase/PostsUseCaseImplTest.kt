@@ -1,4 +1,4 @@
-package guillaume.agis.babylonhealth.manager
+package guillaume.agis.babylonhealth.usecase
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
@@ -8,8 +8,6 @@ import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.model.Post
 import guillaume.agis.babylonhealth.repo.PostsRepository
 import guillaume.agis.babylonhealth.rule.BaseRule
-import guillaume.agis.babylonhealth.usecase.PostsUseCaseImpl
-import guillaume.agis.babylonhealth.usecase.UsersUseCase
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
 import org.junit.Before

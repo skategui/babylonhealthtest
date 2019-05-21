@@ -5,8 +5,8 @@ import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
-import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.rule.BaseRule
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
 import org.junit.Before
@@ -27,14 +27,6 @@ class ListPostsViewModelTest : BaseRule() {
     }
 
     @Test
-    fun `Given the initialisation of the viewModel then emit an empty ListPostsViewState `() {
-        val testObserver = viewModel.viewStateObservable.test()
-        testObserver
-            .assertNoErrors()
-            .assertValue(ListPostsViewState())
-    }
-
-    @Test
     fun `Given a list of posts when viewModel is created then display this list`() {
 
         whenever(postManager.getPosts()).thenReturn(Single.just(posts))
@@ -42,9 +34,11 @@ class ListPostsViewModelTest : BaseRule() {
         val testObserver = viewModel.viewStateObservable.test()
 
         viewModel.onCreate(mock())
-        testObserver
+        val state =testObserver
             .assertNoErrors()
-            .assertValueAt(2, ListPostsViewState(isLoading = false, posts = posts))
+            .values()[1]
+
+        assertThat(state.cast<ListPostsViewState.DisplayPostsList>().posts).isEqualTo(posts)
     }
 
 
@@ -58,7 +52,7 @@ class ListPostsViewModelTest : BaseRule() {
         viewModel.onCreate(mock())
         testObserver
             .assertNoErrors()
-            .assertValueAt(1, ListPostsViewState(isLoading = true))
+            .assertValueAt(0, ListPostsViewState.ShowLoading)
     }
 
 
@@ -72,7 +66,7 @@ class ListPostsViewModelTest : BaseRule() {
         viewModel.onReloadClicked()
         testObserver
             .assertNoErrors()
-            .assertValueAt(1, ListPostsViewState(isLoading = true))
+            .assertValueAt(0, ListPostsViewState.ShowLoading)
     }
 
     @Test
@@ -85,10 +79,9 @@ class ListPostsViewModelTest : BaseRule() {
 
         val state = testObserver
             .assertNoErrors()
-            .values()[2]
+            .values()[1]
 
-        assertThat(state.isLoading).isFalse()
-        assertThat(state.action is Actions.DisplayEmptyListMessage).isTrue()
+        assertThat(state is ListPostsViewState.DisplayEmptyListMessage).isTrue()
     }
 
     @Test
@@ -103,10 +96,9 @@ class ListPostsViewModelTest : BaseRule() {
 
         val state = testObserver
             .assertNoErrors()
-            .values()[2]
+            .values()[1]
 
-        assertThat(state.isLoading).isFalse()
-        assertThat(state.action.cast<Actions.Error>().error).isEqualTo(errorMsg)
+        assertThat(state.cast<ListPostsViewState.Error>().error).isEqualTo(errorMsg)
     }
 
     @Test
@@ -119,7 +111,7 @@ class ListPostsViewModelTest : BaseRule() {
 
         testObserver
             .assertNoErrors()
-            .assertValueAt(2, viewModel.state.copy(action = Actions.NoInternet))
+            .assertValueAt(1, ListPostsViewState.NoInternet)
     }
 
 
@@ -134,24 +126,9 @@ class ListPostsViewModelTest : BaseRule() {
 
         val state = testObserver
             .assertNoErrors()
-            .values()[1]
-
-        assertThat(state.isLoading).isFalse()
-        assertThat(state.action.cast<Actions.OpenPostDetail>().post).isEqualTo(post)
-    }
-
-
-    @Test
-    fun `Given a viewmodel when calling resetAction then default the action of the viewState`() {
-
-        val testObserver = viewModel.viewStateObservable.test()
-
-        viewModel.resetActions()
-
-        testObserver
-            .assertNoErrors()
-            .assertValue(ListPostsViewState(action = Actions.None))
+            .values()[0]
+        assertThat(state.cast<ListPostsViewState.OpenPostDetail>().post).isEqualTo(post)
     }
 }
 
-internal fun <T> Actions.cast(): T = this as T
+internal fun <T> ListPostsViewState.cast(): T = this as T

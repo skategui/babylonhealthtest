@@ -5,9 +5,9 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import guillaume.agis.babylonhealth.api.HttpErrorUtils
-import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.model.Comment
 import guillaume.agis.babylonhealth.rule.BaseRule
+import guillaume.agis.babylonhealth.usecase.PostsUseCase
 import guillaume.agis.babylonhealth.utils.DataBuilder
 import io.reactivex.Single
 import org.junit.Before
@@ -33,20 +33,14 @@ class PostDetailViewModelTest : BaseRule() {
     }
 
     @Test
-    fun `Given the initialisation of the viewModel then emit an empty PostDetailViewState `() {
-        val testObserver = viewModel.viewStateObservable.test()
-        testObserver
-            .assertNoErrors()
-            .assertValue(PostDetailViewState())
-    }
-
-    @Test
     fun `Given the set of a post of the viewModel then emit this post`() {
         val testObserver = viewModel.viewStateObservable.test()
         viewModel.setPost(post)
-        testObserver
+        val state = testObserver
             .assertNoErrors()
-            .assertValueAt(1, PostDetailViewState(post = post))
+            .values()[0]
+
+        assertThat(state.cast<PostDetailViewState.RenderPost>().post).isEqualTo(post)
     }
 
     @Test
@@ -55,9 +49,11 @@ class PostDetailViewModelTest : BaseRule() {
         val testObserver = viewModel.viewStateObservable.test()
 
         viewModel.setPost(post)
-        testObserver
+        val state = testObserver
             .assertNoErrors()
-            .assertValueAt(2, PostDetailViewState(post = post, comments = comments))
+            .values()[1]
+
+        assertThat(state.cast<PostDetailViewState.DisplayCommentsNb>().nbComment).isEqualTo(comments.size)
     }
 
 
@@ -72,10 +68,9 @@ class PostDetailViewModelTest : BaseRule() {
 
         val state = testObserver
             .assertNoErrors()
-            .values()[2]
+            .values()[1]
 
-        assertThat(state.post).isEqualTo(post)
-        assertThat(state.action.cast<Actions.Error>().error).isEqualTo(errorMsg)
+        assertThat(state.cast<PostDetailViewState.DisplayError>().error).isEqualTo(errorMsg)
     }
 
     @Test
@@ -88,18 +83,24 @@ class PostDetailViewModelTest : BaseRule() {
 
         testObserver
             .assertNoErrors()
-            .assertValueAt(2, viewModel.state.copy(action = Actions.NoInternet))
+            .assertValueAt(1, PostDetailViewState.NoInternet)
     }
 
     @Test
     fun `Given the button visible When the comments button is clicked then emit SeeComments`() {
         val testObserver = viewModel.viewStateObservable.test()
 
+
+
+        viewModel.setPost(post)
         viewModel.onCommentBtnClicked()
 
-        testObserver
+        val state = testObserver
             .assertNoErrors()
-            .assertValueAt(1, viewModel.state.copy(action = Actions.SeeComments))
+            .values()[2]
+
+        assertThat(state.cast<PostDetailViewState.SeeComments>().post).isEqualTo(post)
+        assertThat(state.cast<PostDetailViewState.SeeComments>().comments).isEqualTo(comments)
     }
 
     @Test
@@ -111,23 +112,10 @@ class PostDetailViewModelTest : BaseRule() {
 
         val state = testObserver
             .assertNoErrors()
-            .values()[3]
+            .values()[2]
 
-        assertThat(state.post).isEqualTo(post)
-        assertThat(state.action.cast<Actions.OpenEmail>().email).isEqualTo(post.user.email)
-    }
-
-    @Test
-    fun `Given a viewmodel when calling resetAction then default the action of the viewState`() {
-
-        val testObserver = viewModel.viewStateObservable.test()
-
-        viewModel.resetActions()
-
-        testObserver
-            .assertNoErrors()
-            .assertValue(PostDetailViewState(action = Actions.None))
+        assertThat(state.cast<PostDetailViewState.OpenEmail>().email).isEqualTo(post.user.email)
     }
 }
 
-internal fun <T> Actions.cast(): T = this as T
+internal fun <T> PostDetailViewState.cast(): T = this as T
